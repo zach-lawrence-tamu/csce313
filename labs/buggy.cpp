@@ -15,16 +15,18 @@ class Shape
     Point** points;
 
     Shape (int _vertices) {
+        //need to also make sure that each element in the array is dynamically allocated since points is pointer of pointer
         vertices = _vertices;
         points = new Point*[vertices];
         for (int i = 0; i < vertices; i++)
-	{
+	    {
             points[i] = new Point();
         }
     }
 
     ~Shape () 
     {
+        //do not forget destructor
 	for (int i = 0; i < vertices; i++)
 	{
 	    delete points[i];
@@ -35,10 +37,13 @@ class Shape
     void addPoints (/* formal parameter for unsized array called pts */ Point pts[]) {
         for (int i = 0; i < vertices; i++)
 	{
+        //not sure why &pts[i%vertices] was used
 	    memcpy(points[i], &(pts[i]), sizeof(Point));
         }
     }
 
+    //added pointer parameter to prevent local variable being returned since
+    //the stack pointer holding the local var will be popped which causes the data being returned to become 0x0
     double* area (double* a) {
         int temp = 0;
         for (int i = 0; i < vertices - 1; i++) {
@@ -47,8 +52,6 @@ class Shape
               	    
             int lhs = points[i]->x * points[i+1]->y;
             int rhs = (*points[i+1]).x * (*points[i]).y;
-	    //int lhs = points[i]->x;
-	    //int rhs = (*points[i]).x;
             temp += (lhs - rhs);
             //std::cout << i << ": " << points[i]->x << (*points[i]).y << std::endl;
         }
@@ -70,6 +73,7 @@ int main ()
 
     // adding points to tri
     Point triPts[3] = {tri1, tri2, tri3};
+    //fixed this since we are already allocating new memory in the constructor
     Shape tri(3);
     tri.addPoints(triPts);
 
@@ -86,6 +90,7 @@ int main ()
 
     // adding points to quad
     Point quadPts[4] = {quad1, quad2, quad3, quad4};
+    //fixed this since we are already allocating new memory in the constructor
     Shape quad(4);
     quad.addPoints(quadPts);
 
